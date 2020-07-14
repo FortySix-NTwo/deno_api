@@ -1,0 +1,13 @@
+{
+  "imports": {
+    "bcrypt": "https://deno.land/x/bcrypt/mod.ts",
+    "dinoenv": "https://deno.land/x/dinoenv/mod.ts",
+    "environment": "./environment.ts",
+    "oak": "https://deno.land/x/oak/mod.ts",
+    "pg": "https://deno.land/x/pg@v0.5.0/mod.ts",
+    "router": "./src/server/routes.ts",
+    "server": "./src/server/server.ts",
+    "short_uuid": "https://deno.land/x/short_uuid/mod.ts",
+    "types": "./src/model/types.ts"
+  }
+}

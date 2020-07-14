@@ -1,0 +1,21 @@
+version: '3'
+services:
+  db:
+    image: postgres:12
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: '123456'
+      POSTGRES_DATABASE: test
+    ports:
+      - '5442:5432'
+    networks:
+      - local_network
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+networks:
+  local_network:
+    driver: bridge
+
+volumes:
+  db-data:
