@@ -2,7 +2,7 @@ import { Application } from 'oak';
 import { loadEnvironment } from 'environment';
 
 import { pgConnect } from '../model/pg.ts';
-import router from 'router';
+import { router } from 'router';
 
 const port = loadEnvironment.PORT;
 const app = new Application();

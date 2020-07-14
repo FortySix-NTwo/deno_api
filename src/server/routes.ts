@@ -11,4 +11,4 @@ router
   .put('/api/v1/users/:id', updateUser)
   .delete('/api/v1/users/:id', deleteUser);
 
-export default router;
+export { router };

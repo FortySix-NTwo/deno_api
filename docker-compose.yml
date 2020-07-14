@@ -1,11 +1,9 @@
 version: '3'
 services:
-  db:
+  db-container:
     image: postgres:12
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: '123456'
-      POSTGRES_DATABASE: test
+    env_file:
+      - './.env'
     ports:
       - '5442:5432'
     networks:

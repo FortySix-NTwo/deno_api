@@ -1,11 +1,15 @@
 import { Pool } from 'pg';
+import { v4 } from 'uuid';
 
-import { hash } from '../utils/bcrypt.ts';
+import { loadEnvironment } from 'environment';
+import { hash } from 'utils/bcrypt.ts';
 
 const pool = new Pool({
-  hostname: '0.0.0.0',
-  password: '123456',
-  port: 5432,
+  user: loadEnvironment.POSTGRES_USER!,
+  hostname: loadEnvironment.PG_HOST!,
+  password: loadEnvironment.POSTGRES_PASSWORD!,
+  database: loadEnvironment.POSTGRES_DB!,
+  port: loadEnvironment.PG_PORT!,
 });
 
 export const pgConnect = async () => {
@@ -119,10 +123,11 @@ export const findAndUpdateUsernameById = async (id: string, name: string) => {
 export const saveUser = async (fullName: string, userName: string, email: string, password: string) => {
   const client = await pool.connect();
   const hashedPassword = hash(password);
+  const uid = v4.generate();
   try {
     await client.query('BEGIN');
     const result = await client.query(
-      `INSERT INTO users (full_name, user_name, email, hashed_password, created_at, updated_at) VALUES (${fullName}, ${userName}, ${email}, ${hashedPassword}, ${Date.now}, ${Date.now})`
+      `INSERT INTO users (user_id, full_name, user_name, email, hashed_password, created_at, updated_at) VALUES (${uid}, ${fullName}, ${userName}, ${email}, ${hashedPassword}, ${Date.now}, ${Date.now})`
     );
     await client.query('COMMIT');
     return result;
