@@ -1,3 +1,7 @@
+import * as env from 'dinoenv';
 import { Start } from 'server';
 
-Start();
+(async () => {
+  env.config();
+  Start();
+})();

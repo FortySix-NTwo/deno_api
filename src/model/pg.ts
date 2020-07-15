@@ -1,22 +1,16 @@
-import { Pool } from 'pg';
-import { v4 } from 'uuid';
+import { connectPg } from 'pgc4d';
+import { v4 } from 'https://deno.land/std/uuid/mod.ts';
 
+import { hash } from 'hash';
 import { loadEnvironment } from 'environment';
-import { hash } from 'utils/bcrypt.ts';
 
-const pool = new Pool({
-  user: loadEnvironment.POSTGRES_USER!,
-  hostname: loadEnvironment.PG_HOST!,
-  password: loadEnvironment.POSTGRES_PASSWORD!,
-  database: loadEnvironment.POSTGRES_DB!,
-  port: loadEnvironment.PG_PORT!,
-});
+const url = `postgres://${loadEnvironment.POSTGRES_USER}:${loadEnvironment.POSTGRES_PASSWORD}@${loadEnvironment.PG_HOST}/${loadEnvironment.POSTGRES_DB}`;
 
 export const pgConnect = async () => {
-  const client = await pool.connect();
+  const db = await connectPg(url);
   try {
-    await client.query('BEGIN');
-    await client.query(
+    await db.query('BEGIN');
+    await db.query(
       `create table if not exists users (
         user_id           TEXT NOT NULL PRIMARY KEY,
         full_name         VARCHAR(100) NOT NULL,
@@ -26,130 +20,135 @@ export const pgConnect = async () => {
         created_at        DATE,
         updated_at        DATE)`
     );
-    await client.query('COMMIT');
+    await db.query('COMMIT');
   } catch (error) {
-    await client.query('ROLLBACK');
+    await db.query('ROLLBACK');
     return new Error(error);
   } finally {
-    await client.release();
+    await db.close();
   }
 };
 
 export const findOneById = async (id: string) => {
-  const client = await pool.connect();
+  const db = await connectPg(url);
+
   try {
-    await client.query('BEGIN');
-    const result = await client.query(`SELECT * FROM users WHERE user_id=${id}`);
-    await client.query('COMMIT');
+    await db.query('BEGIN');
+    const result = await db.query(`SELECT * FROM users WHERE user_id=${id}`);
+    await db.query('COMMIT');
     return result;
   } catch (error) {
-    await client.query('ROLLBACK');
+    await db.query('ROLLBACK');
     return new Error(error);
   } finally {
-    await client.release();
+    await db.close();
   }
 };
 
 export const findAnyByNameOrEmail = async (name?: string, email?: string) => {
-  const client = await pool.connect();
+  const db = await connectPg(url);
+
   let result;
   try {
     if (name != undefined) {
-      await client.query('BEGIN');
-      result = await client.query(`SELECT * FROM users WHERE full_name=${name}`);
-      await client.query('COMMIT');
+      await db.query('BEGIN');
+      result = await db.query(`SELECT * FROM users WHERE full_name=${name}`);
+      await db.query('COMMIT');
       return result;
     } else {
-      await client.query('BEGIN');
-      result = await client.query(`SELECT * FROM users WHERE email=${email}`);
-      await client.query('COMMIT');
+      await db.query('BEGIN');
+      result = await db.query(`SELECT * FROM users WHERE email=${email}`);
+      await db.query('COMMIT');
       return result;
     }
   } catch (error) {
-    await client.query('ROLLBACK');
+    await db.query('ROLLBACK');
     return new Error(error);
   } finally {
-    await client.release();
+    await db.close();
   }
 };
 
 export const findAndUpdateEmailById = async (id: string, email: string) => {
-  const client = await pool.connect();
+  const db = await connectPg(url);
+
   try {
-    await client.query('BEGIN');
-    const result = await client.query(`UPDATE users SET email=${email}, updated_at=${Date.now} WHERE user_id=${id}`);
-    await client.query('COMMIT');
+    await db.query('BEGIN');
+    const result = await db.query(`UPDATE users SET email=${email}, updated_at=${Date.now} WHERE user_id=${id}`);
+    await db.query('COMMIT');
     return result;
   } catch (error) {
-    await client.query('ROLLBACK');
+    await db.query('ROLLBACK');
     return new Error(error);
   } finally {
-    await client.release();
+    await db.close();
   }
 };
 
 export const findAndUpdatePasswordById = async (id: string, password: string) => {
-  const client = await pool.connect();
+  const db = await connectPg(url);
+
   try {
-    await client.query('BEGIN');
-    const result = await client.query(
-      `UPDATE users SET password=${password}, updated_at=${Date.now} WHERE user_id=${id}`
-    );
-    await client.query('COMMIT');
+    await db.query('BEGIN');
+    const result = await db.query(`UPDATE users SET password=${password}, updated_at=${Date.now} WHERE user_id=${id}`);
+    await db.query('COMMIT');
     return result;
   } catch (error) {
-    await client.query('ROLLBACK');
+    await db.query('ROLLBACK');
     return new Error(error);
   } finally {
-    await client.release();
+    await db.close();
   }
 };
 
 export const findAndUpdateUsernameById = async (id: string, name: string) => {
-  const client = await pool.connect();
+  const db = await connectPg(url);
+
   try {
-    await client.query('BEGIN');
-    const result = await client.query(`UPDATE users SET user_name=${name}, updated_at=${Date.now} WHERE user_id=${id}`);
-    await client.query('COMMIT');
+    await db.query('BEGIN');
+    const result = await db.query(`UPDATE users SET user_name=${name}, updated_at=${Date.now} WHERE user_id=${id}`);
+    await db.query('COMMIT');
     return result;
   } catch (error) {
-    await client.query('ROLLBACK');
+    await db.query('ROLLBACK');
     return new Error(error);
   } finally {
-    await client.release();
+    await db.close();
   }
 };
 
 export const saveUser = async (fullName: string, userName: string, email: string, password: string) => {
-  const client = await pool.connect();
+  const db = await connectPg(url);
+
   const hashedPassword = hash(password);
   const uid = v4.generate();
   try {
-    await client.query('BEGIN');
-    const result = await client.query(
+    await db.query('BEGIN');
+    const result = await db.query(
       `INSERT INTO users (user_id, full_name, user_name, email, hashed_password, created_at, updated_at) VALUES (${uid}, ${fullName}, ${userName}, ${email}, ${hashedPassword}, ${Date.now}, ${Date.now})`
     );
-    await client.query('COMMIT');
+    await db.query('COMMIT');
     return result;
   } catch (error) {
-    await client.query('ROLLBACK');
+    await db.query('ROLLBACK');
     return new Error(error);
   } finally {
-    await client.release();
+    await db.close();
   }
 };
 
 export const removeUser = async (id: string) => {
-  const client = await pool.connect();
+  const db = await connectPg(url);
+
   try {
-    await client.query('BEGIN');
-    const result = await client.query(`DELETE FROM users WHERE user_id=${id}`);
-    await client.query('COMMIT');
+    await db.query('BEGIN');
+    const result = await db.query(`DELETE FROM users WHERE user_id=${id}`);
+    await db.query('COMMIT');
     return result;
   } catch (error) {
-    await client.query('ROLLBACK');
+    await db.query('ROLLBACK');
     return new Error(error);
   } finally {
-    await client.release();
+    await db.close();
   }
 };

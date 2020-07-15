@@ -3,17 +3,11 @@ services:
   db-container:
     image: postgres:12
     env_file:
-      - './.env'
+      - '../.env.docker'
     ports:
       - '5442:5432'
-    networks:
-      - local_network
     volumes:
       - db-data:/var/lib/postgresql/data
-
-networks:
-  local_network:
-    driver: bridge
 
 volumes:
   db-data:
