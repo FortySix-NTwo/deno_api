@@ -44,6 +44,12 @@ docker-compose down postgres-db
 > within the root directory, type the following into the terminal:
 
 ```bash
+# Installing Deno
+brew install deno
+
+# Adding path name to .bashrc or .zshrc
+export PATH="/Users/< user-name >/.deno/bin:$PATH"
+
 # Deno Server with flags
 deno run --allow-net --allow-read  --allow-env --importmap=import_map.json --unstable src/index.ts
 ```
