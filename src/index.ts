@@ -14,20 +14,21 @@ prettier.format('const x = 1', {
 config();
 
 const load = {
-  APP_NAME: Deno.env.get('NAME')?.toString(),
+  APP_NAME: Deno.env.get('NAME'),
   PORT: parseInt(Deno.env.get('PORT')!),
-  PG_USER: Deno.env.get('POSTGRES_USER')?.toString(),
-  PG_PASSWORD: Deno.env.get('POSTGRES_PASSWORD')?.toString(),
-  PG_DB: Deno.env.get('POSTGRES_DATABASE')?.toString(),
-  PG_HOST: Deno.env.get('POSTGRES_HOST')?.toString(),
+  PG_USER: Deno.env.get('POSTGRES_USER'),
+  PG_PASSWORD: Deno.env.get('POSTGRES_PASSWORD'),
+  PG_DB: Deno.env.get('POSTGRES_DATABASE'),
+  PG_HOST: Deno.env.get('POSTGRES_HOST'),
   PG_PORT: parseInt(Deno.env.get('POSTGRES_PORT')!),
 };
 
 export const client = new Client({
-  user: load.PG_USER,
-  database: load.PG_DB,
-  hostname: load.PG_HOST,
-  port: load.PG_PORT,
+  user: load.PG_USER!,
+  database: load.PG_DB!,
+  hostname: load.PG_HOST!,
+  password: load.PG_PASSWORD!,
+  port: load.PG_PORT!,
 });
 
 (async () => {
