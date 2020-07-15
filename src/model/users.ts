@@ -1,3 +1,5 @@
+import { client } from '../index.ts';
+
 import {
   findOneById,
   findAnyByNameOrEmail,
@@ -17,11 +19,11 @@ import {
 export const getUser = async ({ params, response }: { params: { id: string }; response: any }) => {
   const id = params.id;
   try {
-    const result = await findOneById(id);
+    const result = await findOneById(client, id);
     response.status = 200;
     response.body = {
       message: 'OK',
-      data: result,
+      data: JSON.stringify(result),
     };
   } catch (error) {
     response.status = 401;
@@ -40,15 +42,15 @@ export const getUsers = async ({ request, response }: { request: any; response: 
       data: undefined,
     };
   }
-  const body = await request.body();
+  const body = await JSON.parse(request.body);
   const name = body.value.name;
   const email = body.value.email;
   try {
-    const users = await findAnyByNameOrEmail(name, email);
+    const users = await findAnyByNameOrEmail(client, name, email);
     response.status = 200;
     response.body = {
       message: 'OK',
-      data: users,
+      data: JSON.stringify(users),
     };
   } catch (error) {
     response.status = 401;
@@ -71,7 +73,7 @@ export const updateUser = async ({ request, response }: { response: any; request
       data: undefined,
     };
   }
-  const body = await request.body();
+  const body = await JSON.parse(request.body);
   const key = body.key;
   const value = body.value;
   const id = body.id;
@@ -80,19 +82,19 @@ export const updateUser = async ({ request, response }: { response: any; request
   try {
     switch (key) {
       case 'email':
-        user = await findAndUpdateEmailById(id, value);
+        user = await findAndUpdateEmailById(client, id, value);
         break;
       case 'password':
-        user = await findAndUpdatePasswordById(id, value);
+        user = await findAndUpdatePasswordById(client, id, value);
         break;
       case 'name':
-        user = await findAndUpdateUsernameById(id, value);
+        user = await findAndUpdateUsernameById(client, id, value);
         break;
     }
     response.status = 200;
     response.body = {
       message: 'OK',
-      data: user,
+      data: JSON.stringify(user),
     };
   } catch (error) {
     response.status = 401;
@@ -116,13 +118,18 @@ export const createUser = async ({ request, response }: { request: any; response
     };
   }
   try {
-    const body = await request.body();
-    console.log(body.value);
-    const newUser = await saveUser(body.value.fullName, body.value.userName, body.value.email, body.value.password);
+    const body = await JSON.parse(request.body);
+    const newUser = await saveUser(
+      client,
+      body.value.fullName,
+      body.value.userName,
+      body.value.email,
+      body.value.password
+    );
     response.status = 200;
     response.body = {
       message: 'OK',
-      data: newUser,
+      data: JSON.stringify(newUser),
     };
   } catch (error) {
     response.status = 401;
@@ -139,11 +146,11 @@ export const createUser = async ({ request, response }: { request: any; response
 
 export const deleteUser = async ({ params, response }: { params: { id: string }; response: any }) => {
   try {
-    const user = await removeUser(params.id);
+    const user = await removeUser(client, params.id);
     response.status = 200;
     response.body = {
       message: 'OK',
-      data: user,
+      data: JSON.stringify(user),
     };
   } catch (error) {
     response.status = 401;

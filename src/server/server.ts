@@ -1,14 +1,10 @@
 import { Application } from 'oak';
-import { loadEnvironment } from 'environment';
-
-import { pgConnect } from '../model/pg.ts';
 import { router } from 'router';
 
-const port = loadEnvironment.PORT;
 const app = new Application();
 
-export const Start = async () => {
-  await pgConnect();
+export const Start = async (PORT: number) => {
+  const port = PORT;
   app.use(router.routes());
   app.use(router.allowedMethods());
   try {

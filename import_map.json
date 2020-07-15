@@ -1,13 +1,15 @@
 {
   "imports": {
     "bcrypt": "https://deno.land/x/bcrypt/mod.ts",
-    "dinoenv": "https://deno.land/x/dinoenv/mod.ts",
-    "environment": "./environment.ts",
+    "hash": "./src/utils/bcrypt.ts",
     "oak": "https://deno.land/x/oak/mod.ts",
-    "pgc4d": "https://deno.land/x/pgc4d/src/mod.ts",
+    "postgres": "https://deno.land/x/postgres/mod.ts",
     "router": "./src/server/routes.ts",
     "server": "./src/server/server.ts",
     "types": "./src/model/types.ts",
-    "hash": "./src/utils/bcrypt.ts"
+    "v4": "https://deno.land/std/uuid/mod.ts",
+    "env": "https://deno.land/x/dotenv/mod.ts",
+    "load": "https://deno.land/x/dotenv/load.ts",
+    "prettier": "https://denolib.com/denolib/prettier/prettier.ts"
   }
 }
