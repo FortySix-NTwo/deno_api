@@ -8,7 +8,7 @@ The following repo serves as an example for building RESTful Services with [Deno
 
 > In order to run the server, we will need to start a local Postgres instance or by using Docker,
 >
-> - Local Postgres Instance (MacOs Instructions Only):
+> - Local Postgres Instance (MacOS Instructions Only):
 >
 > Located within the scripts folder are two bash scripts in-order to make this process as ease as possible.
 >
